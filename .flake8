@@ -1,0 +1,4 @@
+[flake8]
+ignore = E115, E221, E226, E227, E241, E261, E266, E402, E713
+max-line-length = 300
+exclude = submodule, nike/fighting_ice_python
