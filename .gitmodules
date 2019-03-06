@@ -1,0 +1,3 @@
+[submodule "submodule/FightingICE"]
+	path = submodule/FightingICE
+	url = https://github.com/TeamFightingICE/FightingICE
