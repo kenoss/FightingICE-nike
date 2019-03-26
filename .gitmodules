@@ -1,3 +1,6 @@
 [submodule "submodule/FightingICE"]
 	path = submodule/FightingICE
 	url = https://github.com/TeamFightingICE/FightingICE
+[submodule "team/ut-dl-basics-2019-spring/d4"]
+	path = team/ut-dl-basics-2019-spring/d4
+	url = https://github.com/kenoss/FightingICE-ut-dl-basics-2019-spring-team-d4
