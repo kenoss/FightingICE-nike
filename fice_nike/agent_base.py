@@ -1,6 +1,9 @@
 # Camel case is necesarry...
 
 
+from .action import Action
+
+
 class AgentBase:
     def __init__(self, environment):
         self.environment = environment
@@ -48,10 +51,7 @@ class AgentBase:
                 Frame data.  See method `processing`.
 
         Returns:
-            input_keys: str or Null
-                Sequence of input to control character.
-                Admissible characters are ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘', 'A', 'B', 'C', '_'].
-                '_' and None mean no action.
+            input_keys: [Action] or Action
         '''
         raise NotImplementedError()
 
@@ -81,25 +81,20 @@ class AgentBase:
             self.inputKey = self.cc.getSkillKey()
         else:
             # We empty the keys and cancel skill just in case
-            self.inputKey.empty()
-            self.cc.skillCancel()
-
-            ADMISSIBLE_CHARACTERS = ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘', 'A', 'B', 'C', '_']
-            DICT_CONVERT = {
-                '↙': '1', '↓': '2', '↘': '3',
-                '←': '4',            '→': '6',
-                '↖': '7', '↑': '8', '↗': '9',
-            }
+            # self.inputKey.empty()
+            # self.cc.skillCancel()
 
             inputs = self.policy(self.frameData)
 
             if inputs is None:
-                inputs = '_'
+                xs = [Action.NEUTRAL]
+            elif type(inputs) is not list:
+                assert inputs in Action
+                xs = [inputs]
+            else:
+                xs = inputs
 
-            cs = list(inputs)
-            # assert all([(c in ADMISSIBLE_CHARACTERS) for c in cs])
-            cs_ = [DICT_CONVERT.get(c, c) for c in cs]
-            command = ''.join(cs_)
+            command = ' '.join([x.value for x in xs])
             print(command)
             self.cc.commandCall(command)
 
