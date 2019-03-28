@@ -5,9 +5,13 @@ from .action import Action
 
 
 class AgentBase:
+    THRESHOLD_FRAME_COUNT_FOR_THE_CASE_SIMULATOR_BROKEN = 30
+
     def __init__(self, environment):
         self.environment = environment
         self.gateway = environment.gateway
+
+        self._skill_flag_continue_count = 0
 
     def close(self):
         pass
@@ -59,6 +63,16 @@ class AgentBase:
     #     pass
 
     def processing(self):
+        import inspect; import os; frame = inspect.currentframe(); print(f"DEBUG: {os.path.basename(frame.f_code.co_filename)}: {frame.f_lineno}: {self.__class__.__name__}.{frame.f_code.co_name}: called")
+        try:
+            self._processing()
+        except Exception as e:
+            import sys
+            import traceback
+            print(traceback.format_exception(*sys.exc_info()))
+            print(traceback.format_tb(e.__traceback__))
+
+    def _processing(self):
         # First we check whether we are at the end of the round
         if self.frameData.getEmptyFlag() or self.frameData.getRemainingFramesNumber() <= 0:
             self.isGameJustStarted = True
@@ -77,9 +91,20 @@ class AgentBase:
         self.cc.setFrameData(self.frameData, self.player)
 
         if self.cc.getSkillFlag():
+            self._skill_flag_continue_count += 1
+
             # If there is a previous "command" still in execution, then keep doing it
             self.inputKey = self.cc.getSkillKey()
+
+            # The case simulator seems to be broken.
+            if self._skill_flag_continue_count >= self.THRESHOLD_FRAME_COUNT_FOR_THE_CASE_SIMULATOR_BROKEN:
+                print('=' * 100)
+                print('ERROR: self._skill_flag_continue_count >= self.THRESHOLD_FRAME_COUNT_FOR_THE_CASE_SIMULATOR_BROKEN')
+                print('=' * 100)
+                self.cc.skillCancel()
         else:
+            self._skill_flag_continue_count = 0
+
             # We empty the keys and cancel skill just in case
             # self.inputKey.empty()
             # self.cc.skillCancel()
