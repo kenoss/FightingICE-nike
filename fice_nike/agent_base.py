@@ -63,7 +63,6 @@ class AgentBase:
     #     pass
 
     def processing(self):
-        import inspect; import os; frame = inspect.currentframe(); print(f"DEBUG: {os.path.basename(frame.f_code.co_filename)}: {frame.f_lineno}: {self.__class__.__name__}.{frame.f_code.co_name}: called")
         try:
             self._processing()
         except Exception as e:
